@@ -102,12 +102,12 @@ compile: $(OBJ)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
-	@echo "Suppression des .o et des .d"
+	@echo "Suppression des objets et des dependances"
 	@rm -f $(OBJ) $(DEP)
 	@echo "Terminé!"
 
 fclean : clean
-	@echo "Suppression des .a"
+	@echo "Suppression de libft.a"
 	@rm -f $(NAME)
 	@echo "Terminé!"
 
