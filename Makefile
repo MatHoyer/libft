@@ -1,6 +1,6 @@
 CC = cc
 
-CFLAGS = -Wall -Werror -Wextra -I.
+CFLAGS = -Wall -Werror -Wextra -I. -MMD
 
 AFFICHAGE_SRC =  ft_putchar_fd.c \
 	ft_putendl_fd.c \
@@ -37,6 +37,12 @@ MEM_SRC = ft_bzero.c \
 	ft_memmove.c \
 	ft_memset.c
 
+PRINTF_SRC = ft_aff.c \
+	ft_case.c \
+	ft_convert_base_long.c \
+	ft_convert_base.c \
+	ft_printf.c
+
 STR_SRC = ft_split.c \
 	ft_strchr.c \
 	ft_strdup.c \
@@ -57,6 +63,7 @@ CARAC_PATH = carac/
 CONVERT_PATH = convert/
 LST_PATH = lst/
 MEM_PATH = mem/
+PRINTF_PATH = printf/
 STR_PATH = str/
 
 AFFICHAGE = $(addprefix $(AFFICHAGE_PATH), $(AFFICHAGE_SRC))
@@ -64,6 +71,7 @@ CARAC = $(addprefix $(CARAC_PATH), $(CARAC_SRC))
 CONVERT = $(addprefix $(CONVERT_PATH), $(CONVERT_SRC))
 LST = $(addprefix $(LST_PATH), $(LST_SRC))
 MEM = $(addprefix $(MEM_PATH), $(MEM_SRC))
+PRINTF = $(addprefix $(PRINTF_PATH), $(PRINTF_SRC))
 STR = $(addprefix $(STR_PATH), $(STR_SRC))
 
 SRC = $(AFFICHAGE) \
@@ -71,9 +79,12 @@ SRC = $(AFFICHAGE) \
 	$(CONVERT) \
 	$(LST) \
 	$(MEM) \
+	$(PRINTF) \
 	$(STR)
 
 OBJ = $(SRC:.c=.o)
+
+DEP = $(SRC:.c=.d)
 
 NAME = libft.a
 
@@ -81,32 +92,27 @@ all : $(NAME)
 
 $(NAME) :
 	@echo "Compilation de libft en cours..."
-	@echo -n "Progression: ["
-	@make -s avancement
+	@make -s compile
 	@echo "Terminé!"
 
-avancement: $(OBJ)
-	@i=0; \
-    while [ $$i -le 20 ]; do \
-        sleep 0.1; \
-        echo -n "#"; \
-        i=$$((i+1)); \
-    done
-	@echo "]"
-	@make compile
-
-compile:
+compile: $(OBJ)
 	@ar rcs $(NAME) $(OBJ)
 
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean :
-	@rm -f $(OBJ)
+	@echo "Suppression des .o et des .d"
+	@rm -f $(OBJ) $(DEP)
+	@echo "Terminé!"
 
 fclean : clean
+	@echo "Suppression des .a"
 	@rm -f $(NAME)
+	@echo "Terminé!"
+
+-include $(DEP)
 
 re : fclean all
 
-.PHONY : all clean fclean re
+.PHONY : all compile clean fclean re
